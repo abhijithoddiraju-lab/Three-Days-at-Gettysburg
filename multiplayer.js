@@ -92,6 +92,9 @@
     };
 
     // ─── Boot ────────────────────────────────────────────────────────────────
+    // Expose immediately (hoisted function) so main.js button works on first click
+    window.openMultiplayerLobby = openMultiplayerLobby;
+
     function waitForBoot(cb) {
         const check = setInterval(() => {
             if (window.state && window.state.ui && window.app && window.worldContainer) {
@@ -104,8 +107,6 @@
 
     // ─── Initialise ──────────────────────────────────────────────────────────
     function init() {
-        // Expose lobby opener so the button in main.js can call it
-        window.openMultiplayerLobby = openMultiplayerLobby;
         patchStartGame();
         patchGameLoop();
         patchBulletHitChecks();
@@ -189,6 +190,12 @@
     //  MULTIPLAYER LOBBY SCREEN
     // ═════════════════════════════════════════════════════════════════════════
     function openMultiplayerLobby() {
+        // Guard: if game hasn't finished booting yet, retry in 100ms
+        if (!window.state || !window.state.ui || !window.uiContainer) {
+            setTimeout(openMultiplayerLobby, 100);
+            return;
+        }
+
         const ui   = window.state.ui;
         const c    = window.uiContainer;
 
