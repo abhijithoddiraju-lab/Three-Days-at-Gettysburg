@@ -5,16 +5,197 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Three-Days-at-Gettysburg</title>
     <link rel="stylesheet" type="text/css" href="style.css" />
+    
+    <style>
+      /* --- Fast Tutorial UI Colors --- */
+      #tutorial-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(10, 10, 20, 0.95);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 99999;
+        font-family: 'Times New Roman', Times, serif;
+        color: #b89968; /* Historic Sepia */
+        pointer-events: auto; /* Blocks all clicks from touching the canvas below */
+      }
+      
+      .tutorial-box {
+        background: #141424;
+        border: 2px solid #b89968;
+        border-radius: 10px;
+        padding: 30px;
+        max-width: 460px;
+        width: 90%;
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.85);
+        text-align: center;
+        box-sizing: border-box;
+      }
+      
+      .tutorial-step {
+        display: none;
+      }
+      
+      .tutorial-step.active {
+        display: block;
+      }
+      
+      .tutorial-box h2 {
+        color: #f0c040; /* Gold */
+        margin-top: 0;
+        font-size: 24px;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        border-bottom: 1px solid rgba(184, 153, 104, 0.3);
+        padding-bottom: 10px;
+      }
+      
+      .tutorial-box ul {
+        text-align: left;
+        padding-left: 20px;
+        font-size: 18px;
+        line-height: 1.6;
+      }
+
+      .tutorial-box li {
+        margin-bottom: 10px;
+      }
+      
+      .control-hint {
+        background: #2b3d5b; /* Union Blue */
+        color: #ffffff;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-weight: bold;
+        font-family: monospace;
+        font-size: 15px;
+      }
+
+      .warning-hint {
+        color: #f0c040;
+        font-weight: bold;
+      }
+      
+      .tutorial-buttons {
+        margin-top: 25px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      
+      .btn {
+        background: #2b3d5b;
+        color: #f0c040;
+        border: 1px solid #b89968;
+        padding: 10px 20px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 15px;
+        font-family: 'Times New Roman', Times, serif;
+        font-weight: bold;
+        text-transform: uppercase;
+        transition: all 0.2s ease;
+      }
+      
+      .btn:hover {
+        background: #3e567e;
+        color: #ffffff;
+      }
+      
+      .btn-skip {
+        background: transparent;
+        border-color: transparent;
+        color: #777570;
+        text-transform: none;
+        font-weight: normal;
+      }
+      
+      .btn-skip:hover {
+        color: #b89968;
+      }
+    </style>
   </head>
   <body>
+
+    <div id="tutorial-overlay">
+      <div class="tutorial-box">
+        
+        <div id="step-1" class="tutorial-step active">
+          <h2>Quick Start Guide</h2>
+          <ul>
+            <li><strong>Movement:</strong> Use <span class="control-hint">W</span> <span class="control-hint">A</span> <span class="control-hint">S</span> <span class="control-hint">D</span> to navigate.</li>
+            <li><strong>Combat:</strong> Aim with <span class="control-hint">Mouse</span> and <span class="control-hint">Left-Click</span> to fire.</li>
+            <li><strong>Reload:</strong> Press <span class="control-hint">R</span>. Powder weapons take time.</li>
+          </ul>
+        </div>
+
+        <div id="step-2" class="tutorial-step">
+          <h2>Armory Strategy</h2>
+          <ul>
+            <li>The battlefield demands total versatility.</li>
+            <li><span class="warning-hint">CRITICAL:</span> To survive later waves, make sure you upgrade <strong>BOTH</strong> your rifle and your pistol! Relying on just one weapon leaves you completely vulnerable during reloads.</li>
+          </ul>
+        </div>
+
+        <div class="tutorial-buttons">
+          <button class="btn btn-skip" id="btn-skip" onclick="endTutorial()">Skip</button>
+          <button class="btn" id="btn-next" onclick="nextStep()">Next</button>
+        </div>
+
+      </div>
+    </div>
+
     <div id="canvas-container"></div>
+    
     <script src="https://pixijs.download/v7.4.2/pixi.min.js"></script>
+    <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+
     <script src="main.js"></script>
     <script src="boss.js"></script>
     <script src="commands.js"></script>
-    <!-- PeerJS for browser-to-browser WebRTC (online multiplayer, zero server setup) -->
-    <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
-    <!-- Multiplayer: Local split-keyboard + Online Room Code, 3 PvP modes + Co-op -->
     <script src="multiplayer.js"></script>
+
+    <script>
+      let currentStep = 1;
+      const totalSteps = 2;
+
+      function nextStep() {
+        const currentEl = document.getElementById('step-' + currentStep);
+        if (currentEl) {
+          currentEl.classList.remove('active');
+        }
+        
+        currentStep++;
+
+        if (currentStep <= totalSteps) {
+          const nextEl = document.getElementById('step-' + currentStep);
+          if (nextEl) {
+            nextEl.classList.add('active');
+          }
+          
+          if (currentStep === totalSteps) {
+            document.getElementById('btn-next').innerText = 'Fight';
+          }
+        } else {
+          endTutorial();
+        }
+      }
+
+      function endTutorial() {
+        const overlay = document.getElementById('tutorial-overlay');
+        if (overlay) {
+          overlay.remove();
+        }
+        
+        // Return browser keyboard context focus to PixiJS view context
+        if (window.app && window.app.view) {
+          window.app.view.focus();
+        }
+      }
+    </script>
   </body>
 </html>
