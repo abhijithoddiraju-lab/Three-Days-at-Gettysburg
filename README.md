@@ -10,12 +10,11 @@ An interactive, top-down tactical survival game that simulates the grueling comb
 
 ## 📖 Table of Contents
 
-1. [Core Features](https://www.google.com/search?q=%23-core-features)
-2. [Artistic & Sound Design](https://www.google.com/search?q=%23-artistic--sound-design)
-3. [Installation & Local Setup](https://www.google.com/search?q=%23-installation--local-setup)
-4. [Gameplay Tutorial & Controls](https://www.google.com/search?q=%23-gameplay-tutorial--controls)
-5. [Project Architecture](https://www.google.com/search?q=%23-project-architecture)
-6. [Works Cited](https://www.google.com/search?q=%23-works-cited)
+1. [Core Features]
+2. [Artistic & Sound Design]
+3. [Installation & Local Setup]
+4. [Gameplay Tutorial & Controls]
+5. [Project Architecture]
 
 ---
 
