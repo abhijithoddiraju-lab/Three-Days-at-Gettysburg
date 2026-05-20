@@ -1,5 +1,3 @@
-Here is a comprehensive, production-ready `README.md` tailored specifically for your project repository, detailing its setup, architecture, and a complete player tutorial.
-
 ---
 
 # Three Days at Gettysburg (Union Edition)
